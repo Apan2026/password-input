@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Password Strength Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="password"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .checkbox {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkbox input {
+            width: auto;
+        }
+        .checkbox label {
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .strength-meter {
+            margin-top: 15px;
+            height: 8px;
+            background: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+            background-color: #ddd;
+        }
+
+        .strength-text {
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .weak {
+            color: #d9534f;
+        }
+        .weak-bar {
+            background-color: #d9534f;
+        }
+
+        .medium {
+            color: #f0ad4e;
+        }
+        .medium-bar {
+            background-color: #f0ad4e;
+        }
+
+        .strong {
+            color: #5cb85c;
+        }
+        .strong-bar {
+            background-color: #5cb85c;
+        }
+
+        .requirements {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            color: #666;
+        }
+
+        .requirement.met {
+            color: #5cb85c;
+            font-weight: bold;
+        }
+
+        .requirement-check {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+            color: #0c5460;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Password Strength Checker</h1>
+        
+        <div class="form-group">
+            <label>Type Password:</label>
+            <input type="password" id="pwd" placeholder="Enter your password" oninput="checkPassword()">
+            
+            <div class="checkbox">
+                <input type="checkbox" id="toggle" onchange="togglePassword()">
+                <label for="toggle">Show Password</label>
+            </div>
+        </div>
+
+        <div class="strength-meter">
+            <div class="strength-bar" id="strengthBar"></div>
+        </div>
+
+        <div class="strength-text" id="strengthText">-</div>
+
+        <div class="requirements">
+            <div style="font-weight: bold; margin-bottom: 10px;">Password Requirements:</div>
+            
+            <div class="requirement" id="req-length">
+                <span class="requirement-check" id="check-length">✗</span>
+                <span>At least 8 characters</span>
+            </div>
+            
+            <div class="requirement" id="req-uppercase">
+                <span class="requirement-check" id="check-uppercase">✗</span>
+                <span>At least one uppercase letter (A-Z)</span>
+            </div>
+            
+            <div class="requirement" id="req-lowercase">
+                <span class="requirement-check" id="check-lowercase">✗</span>
+                <span>At least one lowercase letter (a-z)</span>
+            </div>
+            
+            <div class="requirement" id="req-number">
+                <span class="requirement-check" id="check-number">✗</span>
+                <span>At least one number (0-9)</span>
+            </div>
+            
+            <div class="requirement" id="req-special">
+                <span class="requirement-check" id="check-special">✗</span>
+                <span>At least one special character (@$!%*?&)</span>
+            </div>
+        </div>
+
+        <div class="info">
+            💡 <strong>Tip:</strong> A strong password contains uppercase, lowercase, numbers, and special characters!
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            var input = document.getElementById('pwd');
+            if (document.getElementById('toggle').checked) {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+
+        function checkPassword() {
+            var password = document.getElementById('pwd').value;
+            var strength = 0;
+            var checks = {
+                length: false,
+                uppercase: false,
+                lowercase: false,
+                number: false,
+                special: false
+            };
+
+            // Length check
+            if (password.length >= 8) {
+                strength++;
+                checks.length = true;
+            }
+
+            // Uppercase check
+            if (/[A-Z]/.test(password)) {
+                strength++;
+                checks.uppercase = true;
+            }
+
+            // Lowercase check
+            if (/[a-z]/.test(password)) {
+                strength++;
+                checks.lowercase = true;
+            }
+
+            // Number check
+            if (/[0-9]/.test(password)) {
+                strength++;
+                checks.number = true;
+            }
+
+            // Special character check
+            if (/[@$!%*?&]/.test(password)) {
+                strength++;
+                checks.special = true;
+            }
+
+            // Update requirements display
+            updateRequirement('length', checks.length);
+            updateRequirement('uppercase', checks.uppercase);
+            updateRequirement('lowercase', checks.lowercase);
+            updateRequirement('number', checks.number);
+            updateRequirement('special', checks.special);
+
+            // Update strength meter and text
+            var strengthBar = document.getElementById('strengthBar');
+            var strengthText = document.getElementById('strengthText');
+
+            strengthBar.className = 'strength-bar';
+            strengthText.className = 'strength-text';
+
+            if (password === '') {
+                strengthBar.style.width = '0%';
+                strengthText.textContent = '-';
+                strengthBar.className = 'strength-bar';
+            } else if (strength <= 2) {
+                strengthBar.style.width = '33%';
+                strengthBar.classList.add('weak-bar');
+                strengthText.textContent = '❌ Weak Password';
+                strengthText.classList.add('weak');
+            } else if (strength === 3 || strength === 4) {
+                strengthBar.style.width = '66%';
+                strengthBar.classList.add('medium-bar');
+                strengthText.textContent = '⚠️ Medium Password';
+                strengthText.classList.add('medium');
+            } else {
+                strengthBar.style.width = '100%';
+                strengthBar.classList.add('strong-bar');
+                strengthText.textContent = '✅ Strong Password';
+                strengthText.classList.add('strong');
+            }
+        }
+
+        function updateRequirement(requirement, met) {
+            var reqElement = document.getElementById('req-' + requirement);
+            var checkElement = document.getElementById('check-' + requirement);
+
+            if (met) {
+                reqElement.classList.add('met');
+                checkElement.textContent = '✓';
+            } else {
+                reqElement.classList.remove('met');
+                checkElement.textContent = '✗';
+            }
+        }
+    </script>
+</body>
+</html>
